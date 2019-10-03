@@ -1,6 +1,10 @@
 from __future__ import print_function
 import argparse
 import os
+
+import sys
+sys.path.append(os.path.abspath('.'))
+
 import random
 import torch
 import torch.nn.parallel
@@ -10,7 +14,6 @@ from pointnet.dataset import ShapeNetDataset, ModelNetDataset
 from pointnet.model import PointNetCls, feature_transform_regularizer
 import torch.nn.functional as F
 from tqdm import tqdm
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -23,12 +26,16 @@ parser.add_argument(
     '--nepoch', type=int, default=250, help='number of epochs to train for')
 parser.add_argument('--outf', type=str, default='cls', help='output folder')
 parser.add_argument('--model', type=str, default='', help='model path')
-parser.add_argument('--dataset', type=str, required=True, help="dataset path")
+parser.add_argument('--dataset', type=str, default='shapenetcore_partanno_segmentation_benchmark_v0', help="dataset path")
 parser.add_argument('--dataset_type', type=str, default='shapenet', help="dataset type shapenet|modelnet40")
 parser.add_argument('--feature_transform', action='store_true', help="use feature transform")
+parser.add_argument('--gpus', type=str, default='1', help='visible GPUs')
 
 opt = parser.parse_args()
 print(opt)
+
+# Set visible GPUs
+os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpus
 
 blue = lambda x: '\033[94m' + x + '\033[0m'
 
